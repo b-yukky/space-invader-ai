@@ -88,10 +88,9 @@ class SpaceInvaders():
         """
         player_position = (self.get_player_X(), self.get_player_Y())
         invaders_position = (self.get_indavers_X(), self.get_indavers_Y())
-        bullet_position = (self.get_bullet_X(), self.get_bullet_Y())
         bullet_state = self.get_bullet_state()
         #full_image = self.full_image()
-        return [player_position, invaders_position, bullet_position, bullet_state]
+        return [player_position, invaders_position, bullet_state]
 
     def reset(self):
         """Reset the game at the initial state.
