@@ -26,7 +26,7 @@ class SpaceInvaders():
         self.display = display
         
         # nombre d'actions (left, right, fire, no_action)
-        self.na = 4 
+        self.na = 4
 
         # initializing pygame
         pygame.init()
@@ -82,12 +82,22 @@ class SpaceInvaders():
         return pygame.surfarray.array3d(self.screen)
 
     def get_state(self):
-        """ A COMPLETER AVEC VOTRE ETAT
+        """
         Cette méthode doit renvoyer l'état du système comme vous aurez choisi de
         le représenter. Vous pouvez utiliser les accesseurs ci-dessus pour cela. 
         """
-        return "L'état n'est pas implémenté (SpaceInvaders.get_state)"
+        player_X = round(self.get_player_X(), 2)
+        invader_X = round(self.get_indavers_X()[0], 2)
+        invader_Y = round(self.get_indavers_Y()[0], 2)
+        bullet_state = 1 if self.get_bullet_state() == "fire" else 0
+        return np.array([player_X, invader_X, invader_Y, bullet_state], dtype='float32')
 
+    def get_state2(self):
+        player_position = (self.get_player_X(), self.get_player_Y())
+        invaders_position = (self.get_indavers_X(), self.get_indavers_Y())
+        bullet_state = 1 if self.get_bullet_state() == "fire" else 0
+        return [player_position, invaders_position, bullet_state]
+    
     def reset(self):
         """Reset the game at the initial state.
         """
@@ -142,7 +152,7 @@ class SpaceInvaders():
         if action == 2: # FIRE
             self.player_Xchange = 0
             # Fixing the change of direction of bullet
-            if self.bullet_state is "rest":
+            if self.bullet_state == "rest":
                 self.bullet_X = self.player_X
                 self.move_bullet(self.bullet_X, self.bullet_Y)
         if action == 3: # NO ACTION 
@@ -157,7 +167,7 @@ class SpaceInvaders():
         if self.bullet_Y <= 0:
             self.bullet_Y = 600
             self.bullet_state = "rest"
-        if self.bullet_state is "fire":
+        if self.bullet_state == "fire":
             self.move_bullet(self.bullet_X, self.bullet_Y)
             self.bullet_Y -= self.bullet_Ychange
     
