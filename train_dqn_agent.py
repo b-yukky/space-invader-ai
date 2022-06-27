@@ -14,11 +14,11 @@ def format_state(state):
 
 def main(mode):
 
-    game = SpaceInvaders(display=False)
+    game = SpaceInvaders(display=True)
     
     #Basic hyperparameters 
-    n_episodes = 2000
-    max_steps = 50
+    n_episodes = 1000
+    max_steps = 100
     gamma = 0.9
     alpha = 0.01
     eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.1)
@@ -42,11 +42,17 @@ def main(mode):
     agent.learn(game, n_episodes, max_steps)
 
     state = game.reset()
+    score = 0
+    step = 0
     while True:
         action = agent.select_action(state)
         state, reward, is_done = game.step(action)
         sleep(0.0001)
-        format_state(state)
+        print(state)
+        score += reward
+        step += 1
+        if reward == 1:
+            print(f"Step {step} | Score {step}")
 
 if __name__ == '__main__' :
     if (len(sys.argv) > 1):
