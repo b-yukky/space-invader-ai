@@ -7,11 +7,10 @@ from classes import epsilon_profile
 from classes import networks
 
 def format_state(state):
-    player_x = round(state[0][0])
-    player_y = round(state[0][1])
+    player_x = round(state[0])
     invaders_x = [round(x) for x in state[1][0]]
     invaders_y = [round(y) for y in state[1][1]]
-    print(f'Player: [{player_x},{player_y}] | Inv: [{invaders_x},{invaders_y}] | Bullet: {state[2]}')
+    print(f'Player: [{player_x}] | Inv: [{invaders_x},{invaders_y}] | Bullet: {state[2]}')
 
 def main(mode):
 

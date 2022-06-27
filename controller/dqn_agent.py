@@ -139,6 +139,7 @@ class DQNAgent():
         :param next_state: L'état suivant
         """
         # Ajoute les éléments dans le buffer d'expérience
+        #print(state, reward, next_state, terminal)
         self.Ds[self.d], self.Dr[self.d], self.Dsn[self.d], self.Dt[self.d] = state, reward, next_state, terminal
 
         # since Da[d,:] is a one-hot vector
@@ -213,7 +214,7 @@ class DQNAgent():
                 if terminal:
                     break
                 s = sn
-            extra_steps[k] = t + 1 - env.shortest_length, env.shortest_length
+            extra_steps[k] = t + 1 - r, r
         order = extra_steps[:, 0].argsort()
         extra_steps = extra_steps[order]
         return test_score / n_runs, extra_steps
