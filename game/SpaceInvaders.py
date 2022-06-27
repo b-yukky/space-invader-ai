@@ -1,3 +1,4 @@
+from fileinput import close
 import pygame
 import random
 import math
@@ -98,6 +99,27 @@ class SpaceInvaders():
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
         return [player_position, invaders_position, bullet_state]
     
+    def get_invader_position(self):
+        """
+        Cette méthode renvoie la position de l'alien le plus proche.
+        Par le plus proche on entend le plus bas possible et le plus proche du vaisseau.
+        Renvoie un tuple de valeur entières (pos_X, pos_Y)
+        """
+        closest_invader = (1000,1000)
+        if SpaceInvaders.NO_INVADERS > 1 :
+            for i in range(SpaceInvaders.NO_INVADERS):
+                invader_X = round(self.get_indavers_X()[i])
+                invader_Y = round(self.get_indavers_Y()[i])
+                if invader_Y < closest_invader[1] :
+                    closest_invader = (invader_X, invader_Y)
+                elif invader_Y == closest_invader[1]:
+                    if abs(invader_X - self.player_X) < abs(closest_invader[0] - self.player_X) :
+                        closest_invader = (invader_X, invader_Y)
+        else :
+            closest_invader(round(self.get_indavers_X()[0]), invader_Y = round(self.get_indavers_Y()[0]))
+        return closest_invader
+
+
     def reset(self):
         """Reset the game at the initial state.
         """
