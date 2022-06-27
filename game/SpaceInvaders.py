@@ -26,7 +26,7 @@ class SpaceInvaders():
         self.display = display
         
         # nombre d'actions (left, right, fire, no_action)
-        self.na = 4 
+        self.na = 4
 
         # initializing pygame
         pygame.init()
@@ -82,16 +82,22 @@ class SpaceInvaders():
         return pygame.surfarray.array3d(self.screen)
 
     def get_state(self):
-        """ A COMPLETER AVEC VOTRE ETAT
+        """
         Cette méthode doit renvoyer l'état du système comme vous aurez choisi de
         le représenter. Vous pouvez utiliser les accesseurs ci-dessus pour cela. 
         """
+        player_X = self.get_player_X()
+        invader_X = self.get_indavers_X()
+        invader_Y = self.get_indavers_Y()
+        bullet_state = 1 if self.get_bullet_state() == "fire" else 0
+        return np.array([player_X, invader_X, invader_Y, bullet_state], dtype='object')
+
+    def get_state2(self):
         player_position = (self.get_player_X(), self.get_player_Y())
         invaders_position = (self.get_indavers_X(), self.get_indavers_Y())
-        bullet_state = self.get_bullet_state()
-        #full_image = self.full_image()
+        bullet_state = 1 if self.get_bullet_state() == "fire" else 0
         return [player_position, invaders_position, bullet_state]
-
+    
     def reset(self):
         """Reset the game at the initial state.
         """
