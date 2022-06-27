@@ -30,7 +30,6 @@ class DQNAgent():
         self.tau = tau
         
         # Epsilon profile
-
         self.eps_profile = eps_profile
         self.epsilon = self.eps_profile.initial
         self.init_epsilon = self.eps_profile.initial
@@ -129,6 +128,7 @@ class DQNAgent():
         #     print(test_extra_steps[k])
         print('Final test score: %.1f' % test_score)
         print('Final test success ratio: %.2f' % (np.sum(test_extra_steps == 0) / n_test_runs))
+        
         
     def updateQ(self, state, action, reward, next_state, terminal):
         """ Cette méthode utilise une transition pour mettre à jour la fonction de valeur Q de l'agent. 
