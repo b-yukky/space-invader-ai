@@ -117,14 +117,16 @@ class DQNAgent():
                     self.hard_update()
 
             n_ckpt = 10
-            if episode % DQNAgent.TEST_FREQUENCY == DQNAgent.TEST_FREQUENCY - 1:   
-                test_score, test_extra_steps = self.run_tests(env, 100, max_steps)
-                # train score: %.1f, mean steps: %.1f, test score: %.1f, test extra steps: %.1f,
-                #np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]), np.mean(len_episode[episode-(n_ckpt-1):episode+1]), test_score, np.mean(test_extra_steps), 
-                print('Episode: %5d/%5d, Test success ratio: %.2f, Epsilon: %.2f, Time: %.1f'
-                      % (episode + 1, n_episodes, np.sum(test_extra_steps == 0) / 100, self.epsilon, time.time() - self.start_time))
+            n_test_runs = 3
 
-        n_test_runs = 100
+            if episode % DQNAgent.TEST_FREQUENCY == DQNAgent.TEST_FREQUENCY - 1:   
+                test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
+                print('Episode: %5d/%5d, Test success ratio: %.2f, Epsilon: %.2f, Time: %.1f'
+                      % (episode + 1, n_episodes, np.sum(test_extra_steps == 0) / n_test_runs, self.epsilon, time.time() - self.start_time))
+                print('train score: %.1f, mean steps: %.1f, test score: %.1f, test extra steps: %.1f'
+                      % (np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]), np.mean(len_episode[episode-(n_ckpt-1):episode+1]), test_score, np.mean(test_extra_steps)))
+                
+                
         test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
         # for k in range(n_test_runs):
         #     print(test_extra_steps[k])
@@ -198,10 +200,10 @@ class DQNAgent():
 
     def export_weight(self):
         try:
-            torch.save(self.target_net.state_dict(), f"weights_ouii")
+            #torch.save(self.target_net.state_dict(), f"weights_ouii!")
             print(self.target_net.state_dict())
             trained_time = str(datetime.timedelta(seconds=(time.time() - self.start_time)))
-            date = datetime.datetime.now().strftime("%Y/%m/%d_%H:%M:%S")
+            date = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%M")
             torch.save(self.target_net.state_dict(), f"weights_{date}")
             with open(f'params_{date}.txt') as f:
                 f.write(f"Training time : {trained_time}")

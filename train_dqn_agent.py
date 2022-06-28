@@ -6,6 +6,7 @@ import sys
 from classes import epsilon_profile
 from classes import networks
 import torch
+import pygame
 
 def format_state(state):
     player_x = round(state[0])
@@ -19,16 +20,16 @@ def main(mode):
     
     #Basic hyperparameters 
     n_episodes = 500
-    max_steps = 15000
-    gamma = 0.9
-    alpha = 0.02
+    max_steps = 25000
+    gamma = 0.95
+    alpha = 0.1
     eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.05)
-    final_exploration_episode = 480
+    final_exploration_episode = 295
     
     #DQN Hyperparameters
-    batch_size = 128
-    replay_memory_size = 1000
-    target_update_frequency = 2
+    batch_size = 64
+    replay_memory_size = 20000
+    target_update_frequency = 3
     tau = 1.0
     
     #Neural network instantiation
@@ -51,6 +52,7 @@ def main(mode):
     step = 0
     game_over = False
     while not game_over:
+        pygame.event.get()
         action = agent.select_action(state)
         state, reward, is_done = game.step(action)
         score += reward
