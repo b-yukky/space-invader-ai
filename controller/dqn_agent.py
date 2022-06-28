@@ -198,9 +198,10 @@ class DQNAgent():
 
     def export_weight(self):
         try:
+            torch.save(self.target_net.state_dict(), f"weights_ouii")
             print(self.target_net.state_dict())
             trained_time = str(datetime.timedelta(seconds=(time.time() - self.start_time)))
-            date = datetime.datetime.now()
+            date = datetime.datetime.now().strftime("%Y/%m/%d_%H:%M:%S")
             torch.save(self.target_net.state_dict(), f"weights_{date}")
             with open(f'params_{date}.txt') as f:
                 f.write(f"Training time : {trained_time}")
