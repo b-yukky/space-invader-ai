@@ -5,6 +5,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 import numpy as np
 import time
+import datetime
 
 from game import SpaceInvaders
 from classes import epsilon_profile
@@ -12,12 +13,14 @@ class DQNAgent():
     """ 
     Deep-Q Learning agent.
     """
-    TEST_FREQUENCY = 100
+    TEST_FREQUENCY = 10
     
     def __init__(self, game: SpaceInvaders, qnetwork: nn.Module, eps_profile: epsilon_profile.EpsilonProfile, gamma: float, alpha: float, replay_memory_size: int = 1000, batch_size: int = 32, target_update_freq: int = 100, tau: float = 1., final_exploration_episode : int = 500):
         
         self.env = game
-                
+        
+        self.na = game.na
+        
         self.policy_net = qnetwork
         self.target_net = copy.deepcopy(qnetwork)
         
@@ -67,7 +70,6 @@ class DQNAgent():
         :param max_num_steps: Le nombre maximum d'étape par épisode
         :type max_num_steps: int
         """
-        self.na = env.na
         self.init_replay_memory(env)
 
         # Initialisation des stats d'apprentissage
@@ -75,7 +77,7 @@ class DQNAgent():
         len_episode = np.zeros(n_episodes)
         n_steps = np.zeros(n_episodes) + max_steps
 
-        start_time = time.time()
+        self.start_time = time.time()
 
         # Execute N episodes
         for episode in range(n_episodes):
@@ -120,7 +122,7 @@ class DQNAgent():
                 # train score: %.1f, mean steps: %.1f, test score: %.1f, test extra steps: %.1f,
                 #np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]), np.mean(len_episode[episode-(n_ckpt-1):episode+1]), test_score, np.mean(test_extra_steps), 
                 print('Episode: %5d/%5d, Test success ratio: %.2f, Epsilon: %.2f, Time: %.1f'
-                      % (episode + 1, n_episodes, np.sum(test_extra_steps == 0) / 100, self.epsilon, time.time() - start_time))
+                      % (episode + 1, n_episodes, np.sum(test_extra_steps == 0) / 100, self.epsilon, time.time() - self.start_time))
 
         n_test_runs = 100
         test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
@@ -128,7 +130,7 @@ class DQNAgent():
         #     print(test_extra_steps[k])
         print('Final test score: %.1f' % test_score)
         print('Final test success ratio: %.2f' % (np.sum(test_extra_steps == 0) / n_test_runs))
-        
+        self.export_weight()
         
     def updateQ(self, state, action, reward, next_state, terminal):
         """ Cette méthode utilise une transition pour mettre à jour la fonction de valeur Q de l'agent. 
@@ -194,6 +196,18 @@ class DQNAgent():
         """
         self.target_net.load_state_dict(self.policy_net.state_dict())
 
+    def export_weight(self):
+        try:
+            print(self.target_net.state_dict())
+            trained_time = str(datetime.timedelta(seconds=(time.time() - self.start_time)))
+            date = datetime.datetime.now()
+            torch.save(self.target_net.state_dict(), f"weights_{date}")
+            with open(f'params_{date}.txt') as f:
+                f.write(f"Training time : {trained_time}")
+                f.write(f"Alpha : {self.alpha}")
+        except Exception as e:
+            print("Error %s" %e)
+    
     def soft_update(self, tau):
         """ Cette fonction fait mise à jour glissante du réseau de neurones cible 
         """

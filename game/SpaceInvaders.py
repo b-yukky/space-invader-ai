@@ -24,6 +24,7 @@ class SpaceInvaders():
     def __init__(self, display : bool = False):
         # player
         self.display = display
+        self.training = False
         
         # nombre d'actions (left, right, fire, no_action)
         self.na = 4
@@ -86,18 +87,21 @@ class SpaceInvaders():
         Cette méthode doit renvoyer l'état du système comme vous aurez choisi de
         le représenter. Vous pouvez utiliser les accesseurs ci-dessus pour cela. 
         """
-        player_X = round(self.get_player_X(), 2)
-        invader_X = round(self.get_indavers_X()[0], 2)
-        invader_Y = round(self.get_indavers_Y()[0], 2)
+        player_X = round(self.get_player_X()/15)
+        invader_X = round(self.get_indavers_X()[0]/15)
+        invader_Y = round(self.get_indavers_Y()[0]/15)
+        invader_direction = 1 if self.invader_Xchange[0] < 0 else 1
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
-        return np.array([player_X, invader_X, invader_Y, bullet_state], dtype='float32')
+        return np.array([player_X, invader_X, invader_Y, invader_direction, bullet_state], dtype='float32')
 
     def get_state2(self):
         player_position = (self.get_player_X(), self.get_player_Y())
         invaders_position = (self.get_indavers_X(), self.get_indavers_Y())
+        invader_direction = 1 if self.invader_Xchange[0] < 0 else 1
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
-        return [player_position, invaders_position, bullet_state]
+        return [player_position, invaders_position, invader_direction, bullet_state]
     
+        
     def reset(self):
         """Reset the game at the initial state.
         """
@@ -130,7 +134,7 @@ class SpaceInvaders():
         self.bullet_Ychange = 3
         self.bullet_state = "rest"
 
-        if self.display:
+        if self.display and not self.training:
             self.render()
     
         return self.get_state()
@@ -205,7 +209,7 @@ class SpaceInvaders():
 
         self.move_player(self.player_X, self.player_Y)
 
-        if self.display:
+        if self.display and not self.training:
             self.render()
     
         return self.get_state(), reward, is_done

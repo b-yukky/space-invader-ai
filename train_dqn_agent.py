@@ -5,6 +5,7 @@ from controller.dqn_agent import DQNAgent
 import sys
 from classes import epsilon_profile
 from classes import networks
+import torch
 
 def format_state(state):
     player_x = round(state[0])
@@ -14,25 +15,29 @@ def format_state(state):
 
 def main(mode):
 
-    game = SpaceInvaders(display=True)
+    game = SpaceInvaders(display=False)
     
     #Basic hyperparameters 
-    n_episodes = 1000
-    max_steps = 100
+    n_episodes = 500
+    max_steps = 15000
     gamma = 0.9
-    alpha = 0.01
-    eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.1)
-    final_exploration_episode = 500
+    alpha = 0.02
+    eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.05)
+    final_exploration_episode = 480
     
     #DQN Hyperparameters
-    batch_size = 32
+    batch_size = 128
     replay_memory_size = 1000
-    target_update_frequency = 100
+    target_update_frequency = 2
     tau = 1.0
     
     #Neural network instantiation
     n_inputs = len(game.get_state())
     model = networks.MLP(n_inputs, game.na)
+    
+    # weights = torch.load("trained_0.47623314486883583")
+    # model.load_state_dict(weights)
+    
     print('--- neural network ---')
     num_params = sum(param.numel() for param in model.parameters() if param.requires_grad)
     print('number of parameters:', num_params)
@@ -44,15 +49,14 @@ def main(mode):
     state = game.reset()
     score = 0
     step = 0
-    while True:
+    game_over = False
+    while not game_over:
         action = agent.select_action(state)
         state, reward, is_done = game.step(action)
-        sleep(0.0001)
-        print(state)
         score += reward
         step += 1
-        if reward == 1:
-            print(f"Step {step} | Score {step}")
+        print(f"Step {step} | Score {score}") if reward > 0 else None
+        game_over = True if is_done else False
 
 if __name__ == '__main__' :
     if (len(sys.argv) > 1):

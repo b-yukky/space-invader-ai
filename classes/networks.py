@@ -15,9 +15,9 @@ class MLP(nn.Module):
         super(MLP, self).__init__()
         self.flatten = nn.Flatten()
         self.layers = nn.Sequential(
-            nn.Linear(n_inputs, 32),
+            nn.Linear(n_inputs, 16),
             nn.ReLU(),
-            nn.Linear(32, na),
+            nn.Linear(16, na),
         )
 
     def forward(self, x):
