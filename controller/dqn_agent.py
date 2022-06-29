@@ -20,6 +20,8 @@ class DQNAgent():
         self.env = game
         
         self.na = game.na
+
+        self.date = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%M")
         
         self.policy_net = qnetwork
         self.target_net = copy.deepcopy(qnetwork)
@@ -203,11 +205,13 @@ class DQNAgent():
             #torch.save(self.target_net.state_dict(), f"weights_ouii!")
             print(self.target_net.state_dict())
             trained_time = str(datetime.timedelta(seconds=(time.time() - self.start_time)))
-            date = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%M")
-            torch.save(self.target_net.state_dict(), f"weights_{date}")
-            with open(f'params_{date}.txt') as f:
-                f.write(f"Training time : {trained_time}")
-                f.write(f"Alpha : {self.alpha}")
+            torch.save(self.target_net.state_dict(), f"weights_{self.date}")
+            with open(f'params_{self.date}.txt') as f:
+                f.write(f"Training time: {trained_time}")
+                f.write(f"Alpha: {self.alpha}")
+                f.write(f"Gamma: {self.gamma}")
+                f.write(f"Replay memory size: {self.replay_memory_size}")
+                f.write(f"Tau: {self.tau}")
         except Exception as e:
             print("Error %s" %e)
     
