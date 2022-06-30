@@ -22,7 +22,7 @@ def main(mode):
     n_episodes = 2500
     max_steps = 25000
     gamma = 0.99
-    alpha = 0.01
+    alpha = 0.05
     eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.02)
     final_exploration_episode = 2450
     
