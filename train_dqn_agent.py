@@ -19,12 +19,12 @@ def main(mode):
     game = SpaceInvaders(display=False)
     
     #Basic hyperparameters 
-    n_episodes = 5000
+    n_episodes = 1000
     max_steps = 25000
     gamma = 0.99
-    alpha = 0.001
+    alpha = 0.0001
     eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.02)
-    final_exploration_episode = 4995
+    final_exploration_episode = 980
     
     #DQN Hyperparameters
     batch_size = 64
