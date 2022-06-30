@@ -205,7 +205,7 @@ class DQNAgent():
             trained_time = str(datetime.timedelta(seconds=(time.time() - self.start_time)))
             date = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%M")
             torch.save(self.target_net.state_dict(), f"weights_{date}")
-            with open(f'params_{date}.txt') as f:
+            with open(f'params_{date}.txt', "w") as f:
                 f.write(f"Training time : {trained_time}")
                 f.write(f"Alpha : {self.alpha}")
         except Exception as e:
