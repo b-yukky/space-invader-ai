@@ -16,7 +16,7 @@ __some ideas__
 - Bullet state
 - //vector (speed+direction) of the closes invader
 - //distance from border limits
-
+- speed
 
 __todo__
 

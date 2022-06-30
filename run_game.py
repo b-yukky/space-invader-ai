@@ -58,6 +58,7 @@ def main(mode):
         state, reward, is_done = game.step(action)
         score += reward
         step += 1
+        print(state)
         print(f"Step {step} | Score {score}") if reward > 0 else None
         game_over = True if is_done else False
 

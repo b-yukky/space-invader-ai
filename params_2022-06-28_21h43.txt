@@ -1,0 +1,1 @@
+Training time : 6:05:28.627062Alpha : 0.001

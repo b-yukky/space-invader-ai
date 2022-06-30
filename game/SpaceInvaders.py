@@ -19,7 +19,7 @@ def getURL(filename):
 
 class SpaceInvaders():
 
-    NO_INVADERS = 1 # Nombre d'aliens  
+    NO_INVADERS = 5 # Nombre d'aliens  
     
     def __init__(self, display : bool = False):
         # player
@@ -60,10 +60,10 @@ class SpaceInvaders():
     def get_player_Y(self) -> int:
         return self.player_Y
 
-    def get_indavers_X(self) -> 'List[int]':
+    def get_invaders_X(self) -> 'List[int]':
         return self.invader_X
 
-    def get_indavers_Y(self) -> 'List[int]':
+    def get_invaders_Y(self) -> 'List[int]':
         return self.invader_Y
 
     def get_bullet_X(self) -> int:
@@ -88,20 +88,38 @@ class SpaceInvaders():
         le représenter. Vous pouvez utiliser les accesseurs ci-dessus pour cela. 
         """
         player_X = round(self.get_player_X()/15)
-        invader_X = round(self.get_indavers_X()[0]/15)
-        invader_Y = round(self.get_indavers_Y()[0]/15)
-        invader_direction = 1 if self.invader_Xchange[0] < 0 else 1
+        invader_X, invader_Y, index = self.get_invader_position()
+        invader_X = round(invader_X/15)
+        invader_Y = round(invader_Y/15)
+        invader_direction = 1 if self.invader_Xchange[index] < 0 else 0
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
         return np.array([player_X, invader_X, invader_Y, invader_direction, bullet_state], dtype='float32')
 
     def get_state2(self):
         player_position = (self.get_player_X(), self.get_player_Y())
-        invaders_position = (self.get_indavers_X(), self.get_indavers_Y())
-        invader_direction = 1 if self.invader_Xchange[0] < 0 else 1
+        invaders_position = (self.get_invaders_X(), self.get_invaders_Y())
+        invader_direction = 1 if self.invader_Xchange[0] < 0 else 0
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
         return [player_position, invaders_position, invader_direction, bullet_state]
     
-        
+    def get_invader_position(self):
+        """
+        Cette méthode renvoie la position de l'alien le plus proche.
+        Par le plus proche on entend le plus bas possible et le plus proche du vaisseau.
+        Renvoie un tuple de valeur entières (pos_X, pos_Y)
+        """
+        closest_invader = (self.get_invaders_X()[0], self.get_invaders_Y()[0], 0)
+        if SpaceInvaders.NO_INVADERS > 1:
+            for i in range(SpaceInvaders.NO_INVADERS):
+                invader_X = round(self.get_invaders_X()[i])
+                invader_Y = round(self.get_invaders_Y()[i])
+                if invader_Y > closest_invader[1]:
+                    closest_invader = (invader_X, invader_Y, i)
+                elif invader_Y == closest_invader[1]:
+                    if abs(invader_X - self.player_X) < abs(closest_invader[0] - self.player_X) :
+                        closest_invader = (invader_X, invader_Y, i)
+        return closest_invader
+    
     def reset(self):
         """Reset the game at the initial state.
         """
