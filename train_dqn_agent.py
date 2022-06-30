@@ -24,7 +24,7 @@ def main(mode):
     gamma = 0.99
     alpha = 0.001
     eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.02)
-    final_exploration_episode = 295
+    final_exploration_episode = 4995
     
     #DQN Hyperparameters
     batch_size = 64

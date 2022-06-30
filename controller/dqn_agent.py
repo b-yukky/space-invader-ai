@@ -49,7 +49,7 @@ class DQNAgent():
         self.optimizer = optim.Adam(self.policy_net.parameters(), lr=self.alpha)
         
         self.log = {
-            "Episode": [],
+            "episode": [],
             "test_success_ratio": [],
             "epsilon": [],
             "time": [],
