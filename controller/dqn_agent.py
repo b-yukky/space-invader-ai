@@ -6,6 +6,7 @@ import torch.nn.functional as F
 import numpy as np
 import time
 import datetime
+import pandas as pd
 
 from game import SpaceInvaders
 from classes import epsilon_profile
@@ -46,6 +47,17 @@ class DQNAgent():
 
         # Adam algorithm for gradient descent optimization method
         self.optimizer = optim.Adam(self.policy_net.parameters(), lr=self.alpha)
+        
+        self.log = {
+            "Episode": [],
+            "test_success_ratio": [],
+            "epsilon": [],
+            "time": [],
+            "train_score": [],
+            "train_mean_steps": [],
+            "test_score": [],
+            "test_mean_steps": []
+        }
     
     def init_replay_memory(self, env: SpaceInvaders):
         """Cette méthode initialise le buffer d'expérience replay.
@@ -73,6 +85,7 @@ class DQNAgent():
         :type max_num_steps: int
         """
         self.init_replay_memory(env)
+        self.init_log()
 
         # Initialisation des stats d'apprentissage
         sum_rewards = np.zeros(n_episodes)
@@ -119,22 +132,31 @@ class DQNAgent():
                     self.hard_update()
 
             n_ckpt = 10
-            n_test_runs = 3
+            n_test_runs = 5
 
             if episode % DQNAgent.TEST_FREQUENCY == DQNAgent.TEST_FREQUENCY - 1:   
                 test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
                 print('Episode: %5d/%5d, Test success ratio: %.2f, Epsilon: %.2f, Time: %.1f'
-                      % (episode + 1, n_episodes, np.sum(test_extra_steps == 0) / n_test_runs, self.epsilon, time.time() - self.start_time))
+                      % (episode + 1, n_episodes, np.sum(test_extra_steps) / n_test_runs, self.epsilon, time.time() - self.start_time))
                 print('train score: %.1f, mean steps: %.1f, test score: %.1f, test extra steps: %.1f'
                       % (np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]), np.mean(len_episode[episode-(n_ckpt-1):episode+1]), test_score, np.mean(test_extra_steps)))
-                
-                
+            
+            self.log["episode"].append(episode+1)
+            self.log["test_success_ratio"].append(np.sum(test_extra_steps) / n_test_runs)
+            self.log["epsilon"].append(self.epsilon)
+            self.log["time"].append(time.time() - self.start_time)
+            self.log["train_score"].append(np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]))
+            self.log["train_mean_steps"].append(np.mean(len_episode[episode-(n_ckpt-1):episode+1]))
+            self.log["test_score"].append(test_score)
+            self.log["test_mean_steps"].append(np.mean(test_extra_steps))
+            
         test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
         # for k in range(n_test_runs):
         #     print(test_extra_steps[k])
         print('Final test score: %.1f' % test_score)
-        print('Final test success ratio: %.2f' % (np.sum(test_extra_steps == 0) / n_test_runs))
+        print('Final test success ratio: %.2f' % (np.sum(test_extra_steps) / n_test_runs))
         self.export_weight()
+        self.export_log()
         
     def updateQ(self, state, action, reward, next_state, terminal):
         """ Cette méthode utilise une transition pour mettre à jour la fonction de valeur Q de l'agent. 
@@ -200,18 +222,24 @@ class DQNAgent():
         """
         self.target_net.load_state_dict(self.policy_net.state_dict())
 
+    def init_log(self):
+        with open(f'./training/params_{self.date}.txt', "w") as f:
+            f.write(f"Alpha: {self.alpha}")
+            f.write(f"Gamma: {self.gamma}")
+            f.write(f"Replay memory size: {self.replay_memory_size}")
+            f.write(f"Tau: {self.tau}")
+
+    def export_log(self):
+        df = pd.DataFrame(self.log)
+        df.to_csv(f'./training/logs_{self.date}', sep=',', encoding='utf-8')
+    
     def export_weight(self):
         try:
-            #torch.save(self.target_net.state_dict(), f"weights_ouii!")
             print(self.target_net.state_dict())
             trained_time = str(datetime.timedelta(seconds=(time.time() - self.start_time)))
-            torch.save(self.target_net.state_dict(), f"weights_{self.date}")
-            with open(f'params_{self.date}.txt') as f:
+            torch.save(self.target_net.state_dict(), f"./training/weights_{self.date}")
+            with open(f'./training/params_{self.date}.txt', "a") as f:
                 f.write(f"Training time: {trained_time}")
-                f.write(f"Alpha: {self.alpha}")
-                f.write(f"Gamma: {self.gamma}")
-                f.write(f"Replay memory size: {self.replay_memory_size}")
-                f.write(f"Tau: {self.tau}")
         except Exception as e:
             print("Error %s" %e)
     
@@ -223,7 +251,7 @@ class DQNAgent():
 
     def run_tests(self, env, n_runs, max_steps):
         test_score = 0.
-        extra_steps = np.zeros((n_runs, 2))
+        extra_steps = np.zeros((n_runs))
         for k in range(n_runs):
             s = env.reset()
             for t in range(max_steps):
@@ -235,7 +263,5 @@ class DQNAgent():
                 if terminal:
                     break
                 s = sn
-            extra_steps[k] = t + 1 - r, r
-        order = extra_steps[:, 0].argsort()
-        extra_steps = extra_steps[order]
+            extra_steps[k] = t
         return test_score / n_runs, extra_steps
