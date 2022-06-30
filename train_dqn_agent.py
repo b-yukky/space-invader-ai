@@ -29,7 +29,7 @@ def main(mode):
     #DQN Hyperparameters
     batch_size = 64
     replay_memory_size = 30000
-    target_update_frequency = 5
+    target_update_frequency = 10
     tau = 1.0
     
     #Neural network instantiation
