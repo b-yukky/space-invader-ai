@@ -5,7 +5,7 @@ from pygame import mixer
 import numpy as np
 import os
 
-os.environ["SDL_VIDEODRIVER"] = "dummy"
+#os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 def getURL(filename):
     return os.path.dirname(__file__) + "/" + filename
@@ -20,7 +20,7 @@ def getURL(filename):
 
 class SpaceInvaders():
 
-    NO_INVADERS = 5 # Nombre d'aliens  
+    NO_INVADERS = 1 # Nombre d'aliens  
     
     def __init__(self, display : bool = False):
         # player

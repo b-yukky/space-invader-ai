@@ -58,7 +58,7 @@ def main(mode):
         state, reward, is_done = game.step(action)
         score += reward
         step += 1
-
+        time.sleep(0.0001)
         print(f"Step {step} | Score {score}") if reward > 0 else None
         game_over = True if is_done else False
 
