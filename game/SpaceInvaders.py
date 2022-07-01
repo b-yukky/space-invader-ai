@@ -1,4 +1,3 @@
-from fileinput import close
 import pygame
 import random
 import math
@@ -6,6 +5,7 @@ from pygame import mixer
 import numpy as np
 import os
 
+os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 def getURL(filename):
     return os.path.dirname(__file__) + "/" + filename
@@ -20,7 +20,7 @@ def getURL(filename):
 
 class SpaceInvaders():
 
-    NO_INVADERS = 10 # Nombre d'aliens  
+    NO_INVADERS = 5 # Nombre d'aliens  
     
     def __init__(self, display : bool = False):
         # player
@@ -88,10 +88,10 @@ class SpaceInvaders():
         Cette méthode doit renvoyer l'état du système comme vous aurez choisi de
         le représenter. Vous pouvez utiliser les accesseurs ci-dessus pour cela. 
         """
-        player_X = round(self.get_player_X()/15)
+        player_X = round(self.get_player_X()/50)
         invader_X, invader_Y, index = self.get_invader_position()
-        invader_X = round(invader_X/15)
-        invader_Y = round(invader_Y/15)
+        invader_X = round(invader_X/50)
+        invader_Y = round(invader_Y/50)
         invader_direction = 1 if self.invader_Xchange[index] < 0 else 0
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
         return np.array([player_X, invader_X, invader_Y, invader_direction, bullet_state], dtype='float32')
@@ -121,27 +121,6 @@ class SpaceInvaders():
                         closest_invader = (invader_X, invader_Y, i)
         return closest_invader
     
-    def get_invader_position(self):
-        """
-        Cette méthode renvoie la position de l'alien le plus proche.
-        Par le plus proche on entend le plus bas possible et le plus proche du vaisseau.
-        Renvoie un tuple de valeur entières (pos_X, pos_Y)
-        """
-        closest_invader = (1000,1000)
-        if SpaceInvaders.NO_INVADERS > 1 :
-            for i in range(SpaceInvaders.NO_INVADERS):
-                invader_X = round(self.get_indavers_X()[i])
-                invader_Y = round(self.get_indavers_Y()[i])
-                if invader_Y < closest_invader[1] :
-                    closest_invader = (invader_X, invader_Y)
-                elif invader_Y == closest_invader[1]:
-                    if abs(invader_X - self.player_X) < abs(closest_invader[0] - self.player_X) :
-                        closest_invader = (invader_X, invader_Y)
-        else :
-            closest_invader(round(self.get_indavers_X()[0]), invader_Y = round(self.get_indavers_Y()[0]))
-        return closest_invader
-
-
     def reset(self):
         """Reset the game at the initial state.
         """

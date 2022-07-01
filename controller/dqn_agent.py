@@ -49,7 +49,7 @@ class DQNAgent():
         self.optimizer = optim.Adam(self.policy_net.parameters(), lr=self.alpha)
         
         self.log = {
-            "Episode": [],
+            "episode": [],
             "test_success_ratio": [],
             "epsilon": [],
             "time": [],
@@ -141,14 +141,14 @@ class DQNAgent():
                 print('train score: %.1f, mean steps: %.1f, test score: %.1f, test extra steps: %.1f'
                       % (np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]), np.mean(len_episode[episode-(n_ckpt-1):episode+1]), test_score, np.mean(test_extra_steps)))
             
-            self.log["episode"].append(episode+1)
-            self.log["test_success_ratio"].append(np.sum(test_extra_steps) / n_test_runs)
-            self.log["epsilon"].append(self.epsilon)
-            self.log["time"].append(time.time() - self.start_time)
-            self.log["train_score"].append(np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]))
-            self.log["train_mean_steps"].append(np.mean(len_episode[episode-(n_ckpt-1):episode+1]))
-            self.log["test_score"].append(test_score)
-            self.log["test_mean_steps"].append(np.mean(test_extra_steps))
+                self.log["episode"].append(episode+1)
+                self.log["test_success_ratio"].append(np.sum(test_extra_steps) / n_test_runs)
+                self.log["epsilon"].append(self.epsilon)
+                self.log["time"].append(time.time() - self.start_time)
+                self.log["train_score"].append(np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]))
+                self.log["train_mean_steps"].append(np.mean(len_episode[episode-(n_ckpt-1):episode+1]))
+                self.log["test_score"].append(test_score)
+                self.log["test_mean_steps"].append(np.mean(test_extra_steps))
             
         test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
         # for k in range(n_test_runs):
@@ -235,9 +235,10 @@ class DQNAgent():
     
     def export_weight(self):
         try:
-            print(self.target_net.state_dict())
+            print(self.policy_net.state_dict())
             trained_time = str(datetime.timedelta(seconds=(time.time() - self.start_time)))
-            torch.save(self.target_net.state_dict(), f"./training/weights_{self.date}")
+            torch.save(self.target_net.state_dict(), f"./training/target_weights_{self.date}")
+            torch.save(self.policy_net.state_dict(), f"./training/policy_weights_{self.date}")
             with open(f'./training/params_{self.date}.txt', "a") as f:
                 f.write(f"Training time: {trained_time}")
         except Exception as e:
