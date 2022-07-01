@@ -19,6 +19,7 @@ def main(mode):
     game = SpaceInvaders(display=False)
     
     #Basic hyperparameters 
+
     n_episodes = 300
     max_steps = 15000
     gamma = 0.99
