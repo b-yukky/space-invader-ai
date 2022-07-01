@@ -19,17 +19,17 @@ def main(mode):
     game = SpaceInvaders(display=False)
     
     #Basic hyperparameters 
-    n_episodes = 2500
-    max_steps = 25000
+    n_episodes = 300
+    max_steps = 15000
     gamma = 0.99
-    alpha = 0.05
+    alpha = 0.1
     eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.02)
-    final_exploration_episode = 2450
+    final_exploration_episode = 290
     
     #DQN Hyperparameters
     batch_size = 64
-    replay_memory_size = 30000
-    target_update_frequency = 10
+    replay_memory_size = 10000
+    target_update_frequency = 50
     tau = 1.0
     
     #Neural network instantiation

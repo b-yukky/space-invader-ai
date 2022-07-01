@@ -5,7 +5,7 @@ from pygame import mixer
 import numpy as np
 import os
 
-os.environ["SDL_VIDEODRIVER"] = "dummy"
+#os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 def getURL(filename):
     return os.path.dirname(__file__) + "/" + filename
@@ -20,7 +20,7 @@ def getURL(filename):
 
 class SpaceInvaders():
 
-    NO_INVADERS = 5 # Nombre d'aliens  
+    NO_INVADERS = 1 # Nombre d'aliens  
     
     def __init__(self, display : bool = False):
         # player
@@ -88,10 +88,10 @@ class SpaceInvaders():
         Cette méthode doit renvoyer l'état du système comme vous aurez choisi de
         le représenter. Vous pouvez utiliser les accesseurs ci-dessus pour cela. 
         """
-        player_X = round(self.get_player_X()/50)
+        player_X = round(self.get_player_X()/80)
         invader_X, invader_Y, index = self.get_invader_position()
-        invader_X = round(invader_X/50)
-        invader_Y = round(invader_Y/50)
+        invader_X = round(invader_X/80)
+        invader_Y = round(invader_Y/60)
         invader_direction = 1 if self.invader_Xchange[index] < 0 else 0
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
         return np.array([player_X, invader_X, invader_Y, invader_direction, bullet_state], dtype='float32')
