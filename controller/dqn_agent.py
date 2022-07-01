@@ -49,7 +49,7 @@ class DQNAgent():
         self.optimizer = optim.Adam(self.policy_net.parameters(), lr=self.alpha)
         
         self.log = {
-            "Episode": [],
+            "episode": [],
             "test_success_ratio": [],
             "epsilon": [],
             "time": [],
@@ -85,7 +85,7 @@ class DQNAgent():
         :type max_num_steps: int
         """
         self.init_replay_memory(env)
-        self.init_log()
+        self.init_log(n_episodes, max_steps)
 
         # Initialisation des stats d'apprentissage
         sum_rewards = np.zeros(n_episodes)
@@ -140,15 +140,15 @@ class DQNAgent():
                       % (episode + 1, n_episodes, np.sum(test_extra_steps) / n_test_runs, self.epsilon, time.time() - self.start_time))
                 print('train score: %.1f, mean steps: %.1f, test score: %.1f, test extra steps: %.1f'
                       % (np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]), np.mean(len_episode[episode-(n_ckpt-1):episode+1]), test_score, np.mean(test_extra_steps)))
-            
-            self.log["episode"].append(episode+1)
-            self.log["test_success_ratio"].append(np.sum(test_extra_steps) / n_test_runs)
-            self.log["epsilon"].append(self.epsilon)
-            self.log["time"].append(time.time() - self.start_time)
-            self.log["train_score"].append(np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]))
-            self.log["train_mean_steps"].append(np.mean(len_episode[episode-(n_ckpt-1):episode+1]))
-            self.log["test_score"].append(test_score)
-            self.log["test_mean_steps"].append(np.mean(test_extra_steps))
+                
+                self.log["episode"].append(episode+1)
+                self.log["test_success_ratio"].append(np.sum(test_extra_steps) / n_test_runs)
+                self.log["epsilon"].append(self.epsilon)
+                self.log["time"].append(time.time() - self.start_time)
+                self.log["train_score"].append(np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]))
+                self.log["train_mean_steps"].append(np.mean(len_episode[episode-(n_ckpt-1):episode+1]))
+                self.log["test_score"].append(test_score)
+                self.log["test_mean_steps"].append(np.mean(test_extra_steps))
             
         test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
         # for k in range(n_test_runs):
@@ -222,12 +222,14 @@ class DQNAgent():
         """
         self.target_net.load_state_dict(self.policy_net.state_dict())
 
-    def init_log(self):
+    def init_log(self, n_episodes, max_steps):
         with open(f'./training/params_{self.date}.txt', "w") as f:
-            f.write(f"Alpha: {self.alpha}")
-            f.write(f"Gamma: {self.gamma}")
-            f.write(f"Replay memory size: {self.replay_memory_size}")
-            f.write(f"Tau: {self.tau}")
+            f.write(f"N episodes: {n_episodes}\n")
+            f.write(f"Max steps: {max_steps}\n")
+            f.write(f"Alpha: {self.alpha}\n")
+            f.write(f"Gamma: {self.gamma}\n")
+            f.write(f"Replay memory size: {self.replay_memory_size}\n")
+            f.write(f"Tau: {self.tau}\n")
 
     def export_log(self):
         df = pd.DataFrame(self.log)
