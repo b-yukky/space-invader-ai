@@ -88,10 +88,10 @@ class SpaceInvaders():
         Cette méthode doit renvoyer l'état du système comme vous aurez choisi de
         le représenter. Vous pouvez utiliser les accesseurs ci-dessus pour cela. 
         """
-        player_X = round(self.get_player_X()/50)
+        player_X = round(self.get_player_X()/80)
         invader_X, invader_Y, index = self.get_invader_position()
-        invader_X = round(invader_X/50)
-        invader_Y = round(invader_Y/50)
+        invader_X = round(invader_X/80)
+        invader_Y = round(invader_Y/60)
         invader_direction = 1 if self.invader_Xchange[index] < 0 else 0
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
         return np.array([player_X, invader_X, invader_Y, invader_direction, bullet_state], dtype='float32')
