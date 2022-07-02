@@ -1,9 +1,11 @@
+from cmath import sqrt
 import pygame
 import random
 import math
 from pygame import mixer
 import numpy as np
 import os
+import math
 
 #os.environ["SDL_VIDEODRIVER"] = "dummy"
 
@@ -97,12 +99,17 @@ class SpaceInvaders():
         return np.array([player_X, invader_X, invader_Y, invader_direction, bullet_state], dtype='float32')
 
     def get_state2(self):
-        player_position = (self.get_player_X(), self.get_player_Y())
-        invaders_position = (self.get_invaders_X(), self.get_invaders_Y())
-        invader_direction = 1 if self.invader_Xchange[0] < 0 else 0
+        distance, angle, index = self.get_invader_vector()
+        invader_direction = 1 if self.invader_Xchange[index] < 0 else 0
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
-        return [player_position, invaders_position, invader_direction, bullet_state]
+        return [distance, angle, invader_direction, bullet_state]
     
+    def get_invader_vector(self):
+        invader_X, invader_Y, index = self.get_invader_position()
+        distance = sqrt( (abs(invader_X - self.get_player_X()))**2 + (invader_Y - self.get_player_Y())**2 ).real
+        angle = math.atan2((invader_X - self.get_player_X()), abs(invader_Y - self.get_player_Y())) / math.pi*180
+        return round(distance/30), round(angle/10), index
+        
     def get_invader_position(self):
         """
         Cette méthode renvoie la position de l'alien le plus proche.

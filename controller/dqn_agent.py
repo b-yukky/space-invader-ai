@@ -7,6 +7,7 @@ import numpy as np
 import time
 import datetime
 import pandas as pd
+import pygame
 
 from game import SpaceInvaders
 from classes import epsilon_profile
@@ -258,7 +259,6 @@ class DQNAgent():
             s = env.reset()
             for t in range(max_steps):
                 q = self.policy_net(torch.FloatTensor(s).unsqueeze(0))
-                
                 # greedy action with random tie break
                 a = np.random.choice(np.where(q[0] == q[0].max())[0])
                 sn, r, terminal = env.step(a)
