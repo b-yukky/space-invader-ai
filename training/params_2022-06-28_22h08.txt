@@ -1,1 +1,0 @@
-Training time : 6:30:30.603062Alpha : 0.1

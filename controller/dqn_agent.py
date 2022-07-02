@@ -7,6 +7,7 @@ import numpy as np
 import time
 import datetime
 import pandas as pd
+import pygame
 
 from game import SpaceInvaders
 from classes import epsilon_profile
@@ -85,7 +86,7 @@ class DQNAgent():
         :type max_num_steps: int
         """
         self.init_replay_memory(env)
-        self.init_log()
+        self.init_log(n_episodes, max_steps)
 
         # Initialisation des stats d'apprentissage
         sum_rewards = np.zeros(n_episodes)
@@ -132,17 +133,17 @@ class DQNAgent():
                     self.hard_update()
 
             n_ckpt = 10
-            n_test_runs = 5
+            n_test_runs = 3
 
             if episode % DQNAgent.TEST_FREQUENCY == DQNAgent.TEST_FREQUENCY - 1:   
                 test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
                 print('Episode: %5d/%5d, Test success ratio: %.2f, Epsilon: %.2f, Time: %.1f'
-                      % (episode + 1, n_episodes, np.sum(test_extra_steps) / n_test_runs, self.epsilon, time.time() - self.start_time))
+                      % (episode + 1, n_episodes, (np.sum(test_extra_steps) / n_test_runs)/(max_steps*n_test_runs), self.epsilon, time.time() - self.start_time))
                 print('train score: %.1f, mean steps: %.1f, test score: %.1f, test extra steps: %.1f'
                       % (np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]), np.mean(len_episode[episode-(n_ckpt-1):episode+1]), test_score, np.mean(test_extra_steps)))
-            
+
                 self.log["episode"].append(episode+1)
-                self.log["test_success_ratio"].append((np.sum(test_extra_steps) / n_test_runs)/(max_steps*n_test_runs))
+                self.log["test_success_ratio"].append((np.sum(test_extra_steps) / n_test_runs)/(max_steps))
                 self.log["epsilon"].append(self.epsilon)
                 self.log["time"].append(time.time() - self.start_time)
                 self.log["train_score"].append(np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]))
@@ -222,12 +223,14 @@ class DQNAgent():
         """
         self.target_net.load_state_dict(self.policy_net.state_dict())
 
-    def init_log(self):
+    def init_log(self, n_episodes, max_steps):
         with open(f'./training/params_{self.date}.txt', "w") as f:
-            f.write(f"Alpha: {self.alpha}")
-            f.write(f"Gamma: {self.gamma}")
-            f.write(f"Replay memory size: {self.replay_memory_size}")
-            f.write(f"Tau: {self.tau}")
+            f.write(f"N episodes: {n_episodes}\n")
+            f.write(f"Max steps: {max_steps}\n")
+            f.write(f"Alpha: {self.alpha}\n")
+            f.write(f"Gamma: {self.gamma}\n")
+            f.write(f"Replay memory size: {self.replay_memory_size}\n")
+            f.write(f"Tau: {self.tau}\n")
 
     def export_log(self):
         df = pd.DataFrame(self.log)
@@ -237,7 +240,6 @@ class DQNAgent():
         try:
             print(self.policy_net.state_dict())
             trained_time = str(datetime.timedelta(seconds=(time.time() - self.start_time)))
-            torch.save(self.target_net.state_dict(), f"./training/target_weights_{self.date}")
             torch.save(self.policy_net.state_dict(), f"./training/policy_weights_{self.date}")
             with open(f'./training/params_{self.date}.txt', "a") as f:
                 f.write(f"Training time: {trained_time}")
@@ -260,6 +262,7 @@ class DQNAgent():
                 # greedy action with random tie break
                 a = np.random.choice(np.where(q[0] == q[0].max())[0])
                 sn, r, terminal = env.step(a)
+                #print(f"state {sn}, action {a}, total_score {test_score}")
                 test_score += r
                 if terminal:
                     break

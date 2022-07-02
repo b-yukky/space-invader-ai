@@ -19,17 +19,18 @@ def main(mode):
     game = SpaceInvaders(display=False)
     
     #Basic hyperparameters 
-    n_episodes = 300
-    max_steps = 15000
+
+    n_episodes = 250
+    max_steps = 25000
     gamma = 0.99
-    alpha = 0.1
-    eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.02)
-    final_exploration_episode = 290
+    alpha = 0.001
+    eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.05)
+    final_exploration_episode = 245
     
     #DQN Hyperparameters
     batch_size = 64
-    replay_memory_size = 10000
-    target_update_frequency = 50
+    replay_memory_size = 30000
+    target_update_frequency = 20
     tau = 1.0
     
     #Neural network instantiation
@@ -38,6 +39,12 @@ def main(mode):
     
     # weights = torch.load("trained_0.47623314486883583")
     # model.load_state_dict(weights)
+    
+    print('--- parameters ---')
+    print('number of episodes:', n_episodes)
+    print('max steps:', max_steps)
+    print('gamma:', gamma)
+    print('alpha:', alpha)
     
     print('--- neural network ---')
     num_params = sum(param.numel() for param in model.parameters() if param.requires_grad)
