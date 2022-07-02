@@ -85,7 +85,7 @@ class SpaceInvaders():
     def full_image(self):
         return pygame.surfarray.array3d(self.screen)
 
-    def get_state(self):
+    def get_state2(self):
         """
         Cette méthode doit renvoyer l'état du système comme vous aurez choisi de
         le représenter. Vous pouvez utiliser les accesseurs ci-dessus pour cela. 
@@ -98,7 +98,7 @@ class SpaceInvaders():
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
         return np.array([player_X, invader_X, invader_Y, invader_direction, bullet_state], dtype='float32')
 
-    def get_state2(self):
+    def get_state(self):
         distance, angle, index = self.get_invader_vector()
         invader_direction = 1 if self.invader_Xchange[index] < 0 else 0
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0

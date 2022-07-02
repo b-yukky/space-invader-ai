@@ -133,7 +133,7 @@ class DQNAgent():
                     self.hard_update()
 
             n_ckpt = 10
-            n_test_runs = 5
+            n_test_runs = 3
 
             if episode % DQNAgent.TEST_FREQUENCY == DQNAgent.TEST_FREQUENCY - 1:   
                 test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
@@ -143,7 +143,7 @@ class DQNAgent():
                       % (np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]), np.mean(len_episode[episode-(n_ckpt-1):episode+1]), test_score, np.mean(test_extra_steps)))
 
                 self.log["episode"].append(episode+1)
-                self.log["test_success_ratio"].append((np.sum(test_extra_steps) / n_test_runs)/(max_steps*n_test_runs))
+                self.log["test_success_ratio"].append((np.sum(test_extra_steps) / n_test_runs)/(max_steps))
                 self.log["epsilon"].append(self.epsilon)
                 self.log["time"].append(time.time() - self.start_time)
                 self.log["train_score"].append(np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]))

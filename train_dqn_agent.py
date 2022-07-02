@@ -20,16 +20,16 @@ def main(mode):
     
     #Basic hyperparameters 
 
-    n_episodes = 8000
-    max_steps = 12000
+    n_episodes = 250
+    max_steps = 25000
     gamma = 0.99
     alpha = 0.001
     eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.05)
-    final_exploration_episode = 7950
+    final_exploration_episode = 245
     
     #DQN Hyperparameters
     batch_size = 64
-    replay_memory_size = 10000
+    replay_memory_size = 30000
     target_update_frequency = 20
     tau = 1.0
     
