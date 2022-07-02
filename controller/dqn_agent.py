@@ -212,7 +212,9 @@ class DQNAgent():
         :param state: L'état courant
         :return: L'action gourmande
         """
-        return self.policy_net(torch.FloatTensor(state).unsqueeze(0)).argmax()
+        q = self.policy_net(torch.FloatTensor(state).unsqueeze(0))
+        a = np.random.choice(np.where(q[0] == q[0].max())[0])
+        return a
     
     def select_action(self, state : 'Tuple[int, int]'):
         if np.random.rand() < self.epsilon:
