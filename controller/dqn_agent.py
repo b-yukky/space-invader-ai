@@ -138,7 +138,7 @@ class DQNAgent():
             if episode % DQNAgent.TEST_FREQUENCY == DQNAgent.TEST_FREQUENCY - 1:   
                 test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
                 print('Episode: %5d/%5d, Test success ratio: %.2f, Epsilon: %.2f, Time: %.1f'
-                      % (episode + 1, n_episodes, (np.sum(test_extra_steps) / n_test_runs)/(max_steps*n_test_runs), self.epsilon, time.time() - self.start_time))
+                      % (episode + 1, n_episodes, (np.sum(test_extra_steps) / n_test_runs)/(max_steps), self.epsilon, time.time() - self.start_time))
                 print('train score: %.1f, mean steps: %.1f, test score: %.1f, test extra steps: %.1f'
                       % (np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]), np.mean(len_episode[episode-(n_ckpt-1):episode+1]), test_score, np.mean(test_extra_steps)))
 

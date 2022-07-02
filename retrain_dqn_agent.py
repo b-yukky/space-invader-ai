@@ -20,12 +20,12 @@ def main(mode):
     
     #Basic hyperparameters 
 
-    n_episodes = 5000
+    n_episodes = 2500
     max_steps = 20000
     gamma = 0.99
-    alpha = 0.1
+    alpha = 0.001
     eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.05)
-    final_exploration_episode = 4950
+    final_exploration_episode = 2450
     
     #DQN Hyperparameters
     batch_size = 48
@@ -36,7 +36,9 @@ def main(mode):
     #Neural network instantiation
     n_inputs = len(game.get_state())
     model = networks.MLP(n_inputs, game.na)
-    
+    weights = torch.load("./training/policy_weights_2022-07-02_11h27")
+    model.load_state_dict(weights)
+    print(weights)
     # weights = torch.load("trained_0.47623314486883583")
     # model.load_state_dict(weights)
     
