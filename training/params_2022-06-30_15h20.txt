@@ -1,1 +1,0 @@
-Alpha: 0.1Gamma: 0.95Replay memory size: 30000Tau: 1.0
