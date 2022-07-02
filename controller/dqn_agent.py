@@ -28,7 +28,7 @@ class DQNAgent():
         self.policy_net = qnetwork
         self.target_net = copy.deepcopy(qnetwork)
         
-        self.best_score = 20
+        self.best_score = 15
         
         # Learning parameters
         self.alpha = alpha
