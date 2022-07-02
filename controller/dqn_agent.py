@@ -15,7 +15,7 @@ class DQNAgent():
     """ 
     Deep-Q Learning agent.
     """
-    TEST_FREQUENCY = 10
+    TEST_FREQUENCY = 5
     
     def __init__(self, game: SpaceInvaders, qnetwork: nn.Module, eps_profile: epsilon_profile.EpsilonProfile, gamma: float, alpha: float, replay_memory_size: int = 1000, batch_size: int = 32, target_update_freq: int = 100, tau: float = 1., final_exploration_episode : int = 500):
         
@@ -27,6 +27,8 @@ class DQNAgent():
         
         self.policy_net = qnetwork
         self.target_net = copy.deepcopy(qnetwork)
+        
+        self.best_score = 20
         
         # Learning parameters
         self.alpha = alpha
@@ -133,7 +135,7 @@ class DQNAgent():
                     self.hard_update()
 
             n_ckpt = 10
-            n_test_runs = 3
+            n_test_runs = 4
 
             if episode % DQNAgent.TEST_FREQUENCY == DQNAgent.TEST_FREQUENCY - 1:   
                 test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
@@ -268,4 +270,7 @@ class DQNAgent():
                     break
                 s = sn
             extra_steps[k] = t
+        if test_score > self.best_score:
+            self.best_score = test_score
+            torch.save(self.policy_net.state_dict(), f"./training/policy_weights_{self.date}_best")
         return test_score / n_runs, extra_steps

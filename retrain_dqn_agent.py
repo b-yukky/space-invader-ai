@@ -20,12 +20,12 @@ def main(mode):
     
     #Basic hyperparameters 
 
-    n_episodes = 2500
+    n_episodes = 2000
     max_steps = 20000
     gamma = 0.99
-    alpha = 0.001
+    alpha = 0.01
     eps_profile = epsilon_profile.EpsilonProfile(1.0, 0.05)
-    final_exploration_episode = 2450
+    final_exploration_episode = 1900
     
     #DQN Hyperparameters
     batch_size = 48
