@@ -214,6 +214,7 @@ class DQNAgent():
         """
         q = self.policy_net(torch.FloatTensor(state).unsqueeze(0))
         a = np.random.choice(np.where(q[0] == q[0].max())[0])
+        #print(q)
         return a
     
     def select_action(self, state : 'Tuple[int, int]'):

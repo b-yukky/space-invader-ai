@@ -1,0 +1,6 @@
+N episodes: 1000
+Max steps: 20000
+Alpha: 0.01
+Gamma: 0.98
+Replay memory size: 10000
+Tau: 1.0
