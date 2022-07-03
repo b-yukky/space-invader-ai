@@ -104,6 +104,7 @@ class DQNAgent():
             # Execute K steps
             for step in range(max_steps):
                 # Selectionne une action
+                pygame.event.get()
                 action = self.select_action(state)
 
                 # Echantillonne l'état suivant et la récompense
@@ -180,7 +181,7 @@ class DQNAgent():
         # since D is a circular buffer
         self.d = (self.d + 1) % self.replay_memory_size
         self.ds = self.ds + 1
-
+ 
         # Commence l'apprentissage quand le buffer est plein
         if self.ds >= self.replay_memory_size:
 
@@ -262,7 +263,9 @@ class DQNAgent():
         extra_steps = np.zeros((n_runs))
         for k in range(n_runs):
             s = env.reset()
+            print("Run %s" %str(k+1))
             for t in range(max_steps):
+                pygame.event.get()
                 q = self.policy_net(torch.FloatTensor(s).unsqueeze(0))
                 # greedy action with random tie break
                 a = np.random.choice(np.where(q[0] == q[0].max())[0])
@@ -276,4 +279,5 @@ class DQNAgent():
         if test_score > self.best_score:
             self.best_score = test_score
             torch.save(self.policy_net.state_dict(), f"./training/policy_weights_{self.date}_best")
+        print("Avg score : %s" %(test_score/n_runs))
         return test_score / n_runs, extra_steps

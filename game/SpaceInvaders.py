@@ -98,11 +98,20 @@ class SpaceInvaders():
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
         return np.array([player_X, invader_X, invader_Y, invader_direction, bullet_state], dtype='float32')
 
+    def get_state2(self):
+        distance, angle, index = self.get_invader_vector()
+        invader_direction = 1 if self.invader_Xchange[index] < 0 else 0
+        bullet_state = 1 if self.get_bullet_state() == "fire" else 0
+        normalized_distance = distance / 50
+        normalized_angle = (angle+8) / 16
+        return [normalized_distance, normalized_angle, invader_direction, bullet_state]
+    
     def get_state(self):
         distance, angle, index = self.get_invader_vector()
         invader_direction = 1 if self.invader_Xchange[index] < 0 else 0
         bullet_state = 1 if self.get_bullet_state() == "fire" else 0
         return [distance, angle, invader_direction, bullet_state]
+        
     
     def get_invader_vector(self):
         invader_X, invader_Y, index = self.get_invader_position()

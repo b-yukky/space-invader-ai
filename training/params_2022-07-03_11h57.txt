@@ -4,3 +4,4 @@ Alpha: 0.01
 Gamma: 0.98
 Replay memory size: 10000
 Tau: 1.0
+Training time: 7:10:00.698501

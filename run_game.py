@@ -35,13 +35,14 @@ def main(mode):
     
     n_inputs = len(game.get_state())
     
+    
     if mode == 'keyboard':
         agent = KeyboardController()
     elif mode == 'random':
         agent = RandomAgent(game.na)
     elif mode == 'dqn':
         model = networks.MLP(n_inputs, game.na)
-        weights = torch.load("./training/policy_weights_2022-07-03_11h57_best")
+        weights = torch.load("./training/policy_weights_2022-07-03_13h21_best")
         model.load_state_dict(weights)
         agent = DQNAgent(game, model, eps_profile, gamma, alpha, replay_memory_size, batch_size, target_update_frequency, tau, final_exploration_episode)
     else:
@@ -53,6 +54,9 @@ def main(mode):
     step = 0
     game_over = False
         
+    # agent.run_tests(game, 10, 20000)
+    # state = game.reset()
+
     while not game_over:
         pygame.event.get()
         action = agent.select_action(state)
