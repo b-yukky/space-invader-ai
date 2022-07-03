@@ -1,0 +1,7 @@
+N episodes: 1000
+Max steps: 20000
+Alpha: 0.01
+Gamma: 0.99
+Replay memory size: 10000
+Tau: 1.0
+Training time: 7:17:56.127481

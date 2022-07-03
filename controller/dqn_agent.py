@@ -15,7 +15,7 @@ class DQNAgent():
     """ 
     Deep-Q Learning agent.
     """
-    TEST_FREQUENCY = 10
+    TEST_FREQUENCY = 5
     
     def __init__(self, game: SpaceInvaders, qnetwork: nn.Module, eps_profile: epsilon_profile.EpsilonProfile, gamma: float, alpha: float, replay_memory_size: int = 1000, batch_size: int = 32, target_update_freq: int = 100, tau: float = 1., final_exploration_episode : int = 500):
         
@@ -27,6 +27,8 @@ class DQNAgent():
         
         self.policy_net = qnetwork
         self.target_net = copy.deepcopy(qnetwork)
+        
+        self.best_score = 15
         
         # Learning parameters
         self.alpha = alpha
@@ -102,6 +104,7 @@ class DQNAgent():
             # Execute K steps
             for step in range(max_steps):
                 # Selectionne une action
+                pygame.event.get()
                 action = self.select_action(state)
 
                 # Echantillonne l'état suivant et la récompense
@@ -133,12 +136,12 @@ class DQNAgent():
                     self.hard_update()
 
             n_ckpt = 10
-            n_test_runs = 3
+            n_test_runs = 4
 
             if episode % DQNAgent.TEST_FREQUENCY == DQNAgent.TEST_FREQUENCY - 1:   
                 test_score, test_extra_steps = self.run_tests(env, n_test_runs, max_steps)
                 print('Episode: %5d/%5d, Test success ratio: %.2f, Epsilon: %.2f, Time: %.1f'
-                      % (episode + 1, n_episodes, (np.sum(test_extra_steps) / n_test_runs)/(max_steps*n_test_runs), self.epsilon, time.time() - self.start_time))
+                      % (episode + 1, n_episodes, (np.sum(test_extra_steps) / n_test_runs)/(max_steps), self.epsilon, time.time() - self.start_time))
                 print('train score: %.1f, mean steps: %.1f, test score: %.1f, test extra steps: %.1f'
                       % (np.mean(sum_rewards[episode-(n_ckpt-1):episode+1]), np.mean(len_episode[episode-(n_ckpt-1):episode+1]), test_score, np.mean(test_extra_steps)))
 
@@ -178,7 +181,7 @@ class DQNAgent():
         # since D is a circular buffer
         self.d = (self.d + 1) % self.replay_memory_size
         self.ds = self.ds + 1
-
+ 
         # Commence l'apprentissage quand le buffer est plein
         if self.ds >= self.replay_memory_size:
 
@@ -210,7 +213,10 @@ class DQNAgent():
         :param state: L'état courant
         :return: L'action gourmande
         """
-        return self.policy_net(torch.FloatTensor(state).unsqueeze(0)).argmax()
+        q = self.policy_net(torch.FloatTensor(state).unsqueeze(0))
+        a = np.random.choice(np.where(q[0] == q[0].max())[0])
+        #print(q)
+        return a
     
     def select_action(self, state : 'Tuple[int, int]'):
         if np.random.rand() < self.epsilon:
@@ -257,7 +263,9 @@ class DQNAgent():
         extra_steps = np.zeros((n_runs))
         for k in range(n_runs):
             s = env.reset()
+            print("Run %s" %str(k+1))
             for t in range(max_steps):
+                pygame.event.get()
                 q = self.policy_net(torch.FloatTensor(s).unsqueeze(0))
                 # greedy action with random tie break
                 a = np.random.choice(np.where(q[0] == q[0].max())[0])
@@ -268,4 +276,8 @@ class DQNAgent():
                     break
                 s = sn
             extra_steps[k] = t
+        if test_score > self.best_score:
+            self.best_score = test_score
+            torch.save(self.policy_net.state_dict(), f"./training/policy_weights_{self.date}_best")
+        print("Avg score : %s" %(test_score/n_runs))
         return test_score / n_runs, extra_steps

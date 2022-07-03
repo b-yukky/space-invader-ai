@@ -24,7 +24,7 @@ def main(mode):
     max_steps = 50
     gamma = 0.9
     alpha = 0.2
-    eps_profile = epsilon_profile.EpsilonProfile(0.05, 0.05)
+    eps_profile = epsilon_profile.EpsilonProfile(0.00, 0.0)
     final_exploration_episode = 480
 
     #DQN Hyperparameters
@@ -35,13 +35,14 @@ def main(mode):
     
     n_inputs = len(game.get_state())
     
+    
     if mode == 'keyboard':
         agent = KeyboardController()
     elif mode == 'random':
         agent = RandomAgent(game.na)
     elif mode == 'dqn':
         model = networks.MLP(n_inputs, game.na)
-        weights = torch.load("./training/target_weights_2022-07-01_20h29")
+        weights = torch.load("./training/policy_weights_2022-07-03_13h21_best")
         model.load_state_dict(weights)
         agent = DQNAgent(game, model, eps_profile, gamma, alpha, replay_memory_size, batch_size, target_update_frequency, tau, final_exploration_episode)
     else:
@@ -53,13 +54,16 @@ def main(mode):
     step = 0
     game_over = False
         
+    # agent.run_tests(game, 10, 20000)
+    # state = game.reset()
+
     while not game_over:
         pygame.event.get()
         action = agent.select_action(state)
         state, reward, is_done = game.step(action)
         score += reward
         step += 1
-        time.sleep(0.01)
+        time.sleep(0.001)
         print(f"state {state} | action {action} | score {score}")
         print(f"Step {step} | Score {score}") if reward > 0 else None
         game_over = True if is_done else False
