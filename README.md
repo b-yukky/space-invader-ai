@@ -1,12 +1,12 @@
-# IAT-projet
-Welcome in the github designed for the IAT-project 2022.
+# IAT-project Space Invader
+
 
 ## Setup
 
 1. Get the source code by cloning this github locally
 ```bash
 git clone https://github.com/b-yukky/space-invader-ai.git
-cd space-invade-ai
+cd space-invader-ai
 ```
 
 2. Install the dependancies in a virtual env
@@ -18,19 +18,21 @@ python -m venv env
 pip3 install -r requirements.txt
 ```
 
-1. Play the game 
+You can run the best agent by running the game
 ```bash
 python3 run_game.py
 ```
 
-You can move the ship using the keys ← et → of your keyboard and fire with space.
+Best agent has been trained with weights "policy_weights_2022-07-03_13h21_best"
+ (16 hours)
 
-## Read the subject
+You can switch trained weights by changing in **run_game.py**
+```
+weights = torch.load("./training/policy_weights_2022-07-03_13h21_best")
+```
 
-A file `subject.pdf` containing the walkthrough of the project is available.
+You can start a training with
+```
+python3 train_dqn_agent.py
+```
 
-## Start coding !
-
-Gl & hf
-
- 
