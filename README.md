@@ -1,7 +1,7 @@
 # IAT-project Space Invader
 
 This project was realized within the scope of a school module.
-We had to implement a reinforcement learning algorithm to teach an agent playing the Space Invader game (code provided).
+We had to implement a reinforcement learning algorithm to teach an agent playing the Space Invader game.
 
 ## Setup
 
